@@ -1,3 +1,13 @@
 *.o
-dnsseed*
+dnsseed
+dnsseed.dat
+dnsseed.dump
 dnsstats.log
+cf-upload.log
+settings.conf
+backups/
+__pycache__/
+*.bak
+*.bak.*
+# excluded until API_KEY is moved to env
+cf-uploader/api.py

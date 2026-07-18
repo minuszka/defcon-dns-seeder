@@ -21,8 +21,16 @@ def main():
 
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
+    required_subversion = configuration.get('required_subversion', '').replace('"', '').strip() or None
+    max_blocks_behind = configuration.get('max_blocks_behind', '').replace('"', '').strip() or None
+
     try:
-        seed_candidates = parser.read_seed_dump(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/' + configuration['cf_seed_dump'].replace('"', ''), configuration['wallet_port'].replace('"', '')[:7].strip())
+        seed_candidates = parser.read_seed_dump(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/' + configuration['cf_seed_dump'].replace('"', ''),
+            configuration['wallet_port'].replace('"', '')[:7].strip(),
+            required_subversion,
+            max_blocks_behind,
+        )
     except errors.SeedsNotFound as e:
         print("ERROR: Problem reading seeds - {}".format(e.message))
         sys.exit(-1)
