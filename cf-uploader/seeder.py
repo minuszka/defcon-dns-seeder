@@ -23,6 +23,9 @@ def main():
 
     required_subversion = configuration.get('required_subversion', '').replace('"', '').strip() or None
     max_blocks_behind = configuration.get('max_blocks_behind', '').replace('"', '').strip() or None
+    min_proto_version = configuration.get('min_peer_proto_version', '').replace('"', '').strip() or None
+    max_seed_age = configuration.get('max_seed_age', '').replace('"', '').strip() or None
+    require_node_network = configuration.get('require_node_network', '').replace('"', '').strip() or None
 
     try:
         seed_candidates = parser.read_seed_dump(
@@ -30,6 +33,9 @@ def main():
             configuration['wallet_port'].replace('"', '')[:7].strip(),
             required_subversion,
             max_blocks_behind,
+            min_proto_version,
+            max_seed_age,
+            require_node_network,
         )
     except errors.SeedsNotFound as e:
         print("ERROR: Problem reading seeds - {}".format(e.message))
