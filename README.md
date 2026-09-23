@@ -1,4 +1,26 @@
-# Generic-seeder
+# DeFCoN DNS Seeder
+
+The DNS seeder of the [DeFCoN](https://www.dfcn.io) network. It crawls the peer-to-peer network, keeps the
+nodes that run the current protocol version and publishes them as A records of `dnsseed.deftrack.xyz`
+through the Cloudflare API.
+
+It is a fork of [guapcrypto/DNS-Seeder](https://github.com/guapcrypto/DNS-Seeder) (generic-seeder v1.1.0),
+which is based on [sipa/bitcoin-seeder](https://github.com/sipa/bitcoin-seeder). DeFCoN changes:
+
+- Only nodes at or above `min_peer_proto_version` are good, published and listed. Nodes below it are
+  retried after `outdated_peer_retry_seconds` instead of being banned for a week, so an upgraded node comes
+  back quickly.
+- `publish_min_proto_version`, `required_subversion`, `max_blocks_behind`, `max_seed_age` and
+  `require_node_network` filter what the Cloudflare uploader publishes.
+- The uploader authenticates with a scoped Cloudflare API token (Zone Read and DNS Edit on one zone)
+  instead of the Global API Key.
+
+Every setting is described in [SETUP.md](SETUP.md), and the changes are listed in [CHANGELOG](CHANGELOG).
+The original generic-seeder documentation follows.
+
+---
+
+## Generic-seeder
 
 ### v1.1.0
 
