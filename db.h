@@ -17,6 +17,7 @@ extern int nCurrentBlock;
 extern int cfg_protocol_version;
 extern int cfg_init_proto_version;
 extern int cfg_min_peer_proto_version;
+extern int cfg_outdated_peer_retry_seconds;
 extern int cfg_wallet_port;
 extern std::string sAppName;
 extern std::string cfg_explorer_url;
@@ -119,7 +120,9 @@ public:
     return false;
   }
   int GetBanTime() const {
-    if (clientVersion && clientVersion < cfg_min_peer_proto_version) { return 604800; }
+    // Nodes below the protocol floor are dropped, but retried soon, so a node that
+    // upgrades is picked up again quickly (upstream banned them for a week).
+    if (clientVersion && clientVersion < cfg_min_peer_proto_version) { return cfg_outdated_peer_retry_seconds; }
     if (IsGood()) return 0;
     if (stat1M.reliability - stat1M.weight + 1.0 < 0.15 && stat1M.count > 32) { return 30*86400; }
     if (stat1W.reliability - stat1W.weight + 1.0 < 0.10 && stat1W.count > 16) { return 7*86400; }
