@@ -1,4 +1,5 @@
 import logging
+import time
 import errors
 
 logger = logging.getLogger(__name__)
@@ -63,7 +64,7 @@ def read_hard_seeds(hard_seeds_file):
     return hard_seeds
 
 
-def read_seed_dump(seeds_file, valid_port, required_subversion=None, max_blocks_behind=None):
+def read_seed_dump(seeds_file, valid_port, required_subversion=None, max_blocks_behind=None, min_proto_version=None, max_seed_age=None, require_node_network=False):
 
     """Read good IP addresses from the seed dump, optionally filtered by client subversion and height."""
 
@@ -76,6 +77,23 @@ def read_seed_dump(seeds_file, valid_port, required_subversion=None, max_blocks_
         logger.info("Filtering seed dump by max blocks behind: {}".format(max_blocks_behind))
     else:
         max_blocks_behind = None
+
+    if min_proto_version not in (None, ""):
+        min_proto_version = int(min_proto_version)
+        logger.info("Filtering seed dump by min protocol version: {}".format(min_proto_version))
+    else:
+        min_proto_version = None
+
+    now_ts = int(time.time())
+    if max_seed_age not in (None, ""):
+        max_seed_age = int(max_seed_age)
+        logger.info("Filtering seed dump by max seed age (s): {}".format(max_seed_age))
+    else:
+        max_seed_age = None
+    if isinstance(require_node_network, str):
+        require_node_network = require_node_network.strip() in ("1", "true", "True", "yes")
+    if require_node_network:
+        logger.info("Filtering seed dump to NODE_NETWORK peers only")
 
     candidates = []
     with open(seeds_file) as seeds:
@@ -94,9 +112,21 @@ def read_seed_dump(seeds_file, valid_port, required_subversion=None, max_blocks_
             try:
                 ip_addr, port = parse_ip(components[0])
                 block_height = int(components[8])
+                proto_version = int(components[10]) if len(components) > 10 else None
+                last_success = int(components[2])
+                svcs = int(components[9], 16) if len(components) > 9 else 0
                 logger.debug("Parsed ip: {}".format(ip_addr))
             except (ValueError, IndexError):
                 logger.error("Could not parse seed row from {} - skipping.".format(components[0] if components else line.strip()))
+                continue
+
+            if min_proto_version is not None and (proto_version is None or proto_version < min_proto_version):
+                continue
+
+            if max_seed_age is not None and (now_ts - last_success) > max_seed_age:
+                continue
+
+            if require_node_network and not (svcs & 0x1):
                 continue
 
             if port == valid_port and components[1] == "1":

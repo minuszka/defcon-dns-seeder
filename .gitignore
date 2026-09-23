@@ -9,5 +9,8 @@ backups/
 __pycache__/
 *.bak
 *.bak.*
+# timestamped backups (e.g. settings.conf.bak-1785330211) carry the Cloudflare token
+*.bak-*
+settings.conf.bak*
 # excluded until API_KEY is moved to env
 cf-uploader/api.py
