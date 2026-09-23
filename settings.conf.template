@@ -1,4 +1,4 @@
-protocol_version="70239"
+protocol_version="70242"
 init_proto_version="209"
 min_peer_proto_version="70239"
 caddr_time_version="31402"
@@ -30,3 +30,4 @@ required_subversion="/DeFCoN:"
 max_blocks_behind=6
 max_seed_age="10800"
 require_node_network="1"
+publish_min_proto_version="70242"

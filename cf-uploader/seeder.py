@@ -23,7 +23,15 @@ def main():
 
     required_subversion = configuration.get('required_subversion', '').replace('"', '').strip() or None
     max_blocks_behind = configuration.get('max_blocks_behind', '').replace('"', '').strip() or None
-    min_proto_version = configuration.get('min_peer_proto_version', '').replace('"', '').strip() or None
+    # The publish floor is separate from the crawler's min_peer_proto_version: the crawler bans
+    # every node below its floor for 7 days (db.h GetBanTime), so raising that floor during an
+    # upgrade window hides nodes that upgrade after it. Filtering here only decides what is
+    # published; the crawler keeps probing everyone and sees an upgrade on its next visit.
+    min_proto_version = (
+        configuration.get('publish_min_proto_version', '').replace('"', '').strip()
+        or configuration.get('min_peer_proto_version', '').replace('"', '').strip()
+        or None
+    )
     max_seed_age = configuration.get('max_seed_age', '').replace('"', '').strip() or None
     require_node_network = configuration.get('require_node_network', '').replace('"', '').strip() or None
 
