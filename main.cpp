@@ -30,6 +30,7 @@ int nDefaultBlockHeight = -1;
 int cfg_protocol_version;
 int cfg_init_proto_version;
 int cfg_min_peer_proto_version;
+int cfg_outdated_peer_retry_seconds;
 int cfg_caddr_time_version;
 unsigned char cfg_message_start[4];
 int cfg_wallet_port;
@@ -641,6 +642,20 @@ int main(int argc, char **argv) {
   } catch(const SettingNotFoundException &nfex) {
     // If the value is not properly set, then default min_peer_proto_version to the protocol_version
     cfg_min_peer_proto_version = cfg_protocol_version;
+  }
+
+  // How long a node below min_peer_proto_version stays dropped before it is tested again.
+  cfg_outdated_peer_retry_seconds = 3600;
+  try {
+    if (is_numeric(const_cast<char*>(cfg.lookup("outdated_peer_retry_seconds").c_str()))) {
+      cfg_outdated_peer_retry_seconds = std::stoi(cfg.lookup("outdated_peer_retry_seconds").c_str());
+    }
+  } catch(const SettingNotFoundException &nfex) {
+    // Optional: keep the default.
+  }
+  if (cfg_outdated_peer_retry_seconds < 60) {
+    cerr << "Error: 'outdated_peer_retry_seconds' setting must be at least 60." << endl;
+    return(EXIT_FAILURE);
   }
 
   try {

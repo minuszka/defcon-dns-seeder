@@ -1,3 +1,7 @@
+DeFCoN [September 23, 2026]
+-Retry nodes below min_peer_proto_version after outdated_peer_retry_seconds (default 1 hour) instead of banning them for 7 days
+-Sample settings: min_peer_proto_version 70242, so only DeFCoN v23 nodes are good, published and listed
+
 1.1.0 [January 31, 2021]
 -Add app name + app version to startup msgs
 -Updated readme layout format and verbiage improvements 

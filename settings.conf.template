@@ -1,6 +1,7 @@
 protocol_version="70242"
 init_proto_version="209"
-min_peer_proto_version="70239"
+min_peer_proto_version="70242"
+outdated_peer_retry_seconds="3600"
 caddr_time_version="31402"
 pchMessageStart_0 = "0xa1"
 pchMessageStart_1 = "0xb2"
