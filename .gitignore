@@ -12,5 +12,5 @@ __pycache__/
 # timestamped backups (e.g. settings.conf.bak-1785330211) carry the Cloudflare token
 *.bak-*
 settings.conf.bak*
-# excluded until API_KEY is moved to env
+# host-specific node API (hard-coded host list), not part of the published seeder
 cf-uploader/api.py
